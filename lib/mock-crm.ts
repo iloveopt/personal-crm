@@ -35,7 +35,7 @@ type ContactInput = Pick<
 >
 
 const STORAGE_KEY = 'personal-crm-demo-state'
-const STATE_VERSION = 2
+const STATE_VERSION = 3
 const FOLLOW_UP_DAYS = 30
 
 let serverState: CrmState | null = null
