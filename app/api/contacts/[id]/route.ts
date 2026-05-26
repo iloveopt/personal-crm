@@ -1,34 +1,20 @@
 import { NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/lib/supabase'
+import { deleteContact, getContactDetail, updateContact } from '@/lib/mock-crm'
+
+export const dynamic = 'force-dynamic'
 
 export async function GET(
   _req: Request,
   { params }: { params: { id: string } }
 ) {
   try {
-    const { data: contact, error } = await supabaseAdmin
-      .from('contacts')
-      .select('*')
-      .eq('id', params.id)
-      .single()
+    const contact = getContactDetail(params.id)
 
-    if (error) throw error
+    if (!contact) {
+      return NextResponse.json({ error: '联系人不存在' }, { status: 404 })
+    }
 
-    const { data: updates } = await supabaseAdmin
-      .from('contact_updates')
-      .select('*')
-      .eq('contact_id', params.id)
-      .order('fetched_at', { ascending: false })
-      .limit(3)
-
-    const { data: suggestions } = await supabaseAdmin
-      .from('ai_suggestions')
-      .select('*')
-      .eq('contact_id', params.id)
-      .order('created_at', { ascending: false })
-      .limit(1)
-
-    return NextResponse.json({ ...contact, updates, suggestions })
+    return NextResponse.json(contact)
   } catch (e: unknown) {
     const err = e as Error
     return NextResponse.json({ error: err.message }, { status: 500 })
@@ -41,21 +27,57 @@ export async function PUT(
 ) {
   try {
     const body = await req.json()
-    const { name, company, title, relationship_type, met_context, notes, last_contacted_at } = body
+    const {
+      name,
+      company,
+      title,
+      industry,
+      location,
+      priority,
+      tags,
+      email,
+      relationship_type,
+      met_context,
+      notes,
+      last_contacted_at,
+    } = body
 
-    const { data, error } = await supabaseAdmin
-      .from('contacts')
-      .update({
-        name, company, title, relationship_type, met_context, notes,
-        last_contacted_at,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', params.id)
-      .select()
-      .single()
+    const contact = updateContact(params.id, {
+      name,
+      company,
+      title,
+      industry,
+      location,
+      priority,
+      tags,
+      email,
+      relationship_type,
+      met_context,
+      notes,
+      last_contacted_at,
+    })
 
-    if (error) throw error
-    return NextResponse.json(data)
+    if (!contact) {
+      return NextResponse.json({ error: '联系人不存在' }, { status: 404 })
+    }
+
+    return NextResponse.json(contact)
+  } catch (e: unknown) {
+    const err = e as Error
+    return NextResponse.json({ error: err.message }, { status: 500 })
+  }
+}
+
+export async function DELETE(
+  _req: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    if (!deleteContact(params.id)) {
+      return NextResponse.json({ error: '联系人不存在' }, { status: 404 })
+    }
+
+    return NextResponse.json({ ok: true })
   } catch (e: unknown) {
     const err = e as Error
     return NextResponse.json({ error: err.message }, { status: 500 })

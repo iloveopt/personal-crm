@@ -5,6 +5,12 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --nike-ink: #050505;
+  --nike-paper: #ffffff;
+  --nike-signal: #fa5400;
+  --nike-volt: #dfff00;
+  --nike-ash: #f3f3f3;
+  --nike-steel: #7a7a7a;
 }
 
 @media (prefers-color-scheme: dark) {

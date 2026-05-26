@@ -1,14 +1,37 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+let supabaseClient: SupabaseClient | null = null
+let supabaseAdminClient: SupabaseClient | null = null
+
+function requireEnv(name: string) {
+  const value = process.env[name]
+
+  if (!value) {
+    throw new Error(`缺少 ${name} 环境变量`)
+  }
+
+  return value
+}
 
 // 客户端（浏览器）
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+export function getSupabase() {
+  supabaseClient ??= createClient(
+    requireEnv('NEXT_PUBLIC_SUPABASE_URL'),
+    requireEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY')
+  )
+
+  return supabaseClient
+}
 
 // 服务端（API routes）
-export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
+export function getSupabaseAdmin() {
+  supabaseAdminClient ??= createClient(
+    requireEnv('NEXT_PUBLIC_SUPABASE_URL'),
+    requireEnv('SUPABASE_SERVICE_ROLE_KEY')
+  )
+
+  return supabaseAdminClient
+}
 
 export type Contact = {
   id: string

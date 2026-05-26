@@ -1,11 +1,22 @@
 import OpenAI from 'openai'
 
-const client = new OpenAI({
-  apiKey: process.env.YUNWU_API_KEY,
-  baseURL: process.env.YUNWU_BASE_URL || 'https://yunwu.ai/v1',
-})
-
 const MODEL = process.env.YUNWU_MODEL || 'claude-3-7-sonnet-20250219'
+let client: OpenAI | null = null
+
+function getClient() {
+  const apiKey = process.env.YUNWU_API_KEY
+
+  if (!apiKey) {
+    throw new Error('缺少 YUNWU_API_KEY 环境变量')
+  }
+
+  client ??= new OpenAI({
+    apiKey,
+    baseURL: process.env.YUNWU_BASE_URL || 'https://yunwu.ai/v1',
+  })
+
+  return client
+}
 
 export async function summarizeUpdates(
   name: string,
@@ -15,7 +26,7 @@ export async function summarizeUpdates(
   if (!searchResults.trim()) return '暂无最新动态'
 
   try {
-    const response = await client.chat.completions.create({
+    const response = await getClient().chat.completions.create({
       model: MODEL,
       messages: [
         {
@@ -49,7 +60,7 @@ export async function generateSuggestion(contact: {
     : null
 
   try {
-    const response = await client.chat.completions.create({
+    const response = await getClient().chat.completions.create({
       model: MODEL,
       messages: [
         {

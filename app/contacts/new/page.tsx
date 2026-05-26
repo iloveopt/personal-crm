@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { RELATIONSHIP_TYPES } from '@/lib/utils'
+import { createContact } from '@/lib/mock-crm'
+import { INDUSTRY_OPTIONS, PRIORITY_TYPES, RELATIONSHIP_TYPES } from '@/lib/utils'
 
 export default function NewContact() {
   const router = useRouter()
@@ -11,6 +12,11 @@ export default function NewContact() {
     name: '',
     company: '',
     title: '',
+    industry: '',
+    location: '',
+    priority: 'medium',
+    email: '',
+    tags: '',
     relationship_type: '',
     met_context: '',
     notes: '',
@@ -22,17 +28,15 @@ export default function NewContact() {
     setLoading(true)
 
     try {
-      const res = await fetch('/api/contacts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+      const contact = createContact({
+        ...form,
+        priority: form.priority as 'high' | 'medium' | 'low',
+        tags: form.tags
+          .split(/[，,]/)
+          .map((tag) => tag.trim())
+          .filter(Boolean),
       })
-      const data = await res.json()
-      if (res.ok) {
-        router.push(`/contacts/${data.id}`)
-      } else {
-        alert(data.error || '添加失败')
-      }
+      router.push(`/contacts/${contact.id}`)
     } catch {
       alert('网络错误，请重试')
     } finally {
@@ -50,7 +54,7 @@ export default function NewContact() {
         <p className="text-sm text-gray-500 mt-1">记录一个重要的人</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-5">
         <div>
           <label className={labelClass}>姓名 *</label>
           <input
@@ -62,7 +66,7 @@ export default function NewContact() {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid gap-3 sm:grid-cols-2">
           <div>
             <label className={labelClass}>公司</label>
             <input
@@ -83,6 +87,54 @@ export default function NewContact() {
           </div>
         </div>
 
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div>
+            <label className={labelClass}>行业</label>
+            <input
+              className={inputClass}
+              placeholder="AI 销售自动化"
+              list="industry-options"
+              value={form.industry}
+              onChange={e => setForm(f => ({ ...f, industry: e.target.value }))}
+            />
+            <datalist id="industry-options">
+              {INDUSTRY_OPTIONS.map((industry) => (
+                <option key={industry} value={industry} />
+              ))}
+            </datalist>
+          </div>
+          <div>
+            <label className={labelClass}>地区</label>
+            <input
+              className={inputClass}
+              placeholder="Shanghai / Singapore"
+              value={form.location}
+              onChange={e => setForm(f => ({ ...f, location: e.target.value }))}
+            />
+          </div>
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div>
+            <label className={labelClass}>邮箱</label>
+            <input
+              className={inputClass}
+              placeholder="name@company.com"
+              value={form.email}
+              onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+            />
+          </div>
+          <div>
+            <label className={labelClass}>标签</label>
+            <input
+              className={inputClass}
+              placeholder="融资, SaaS, 出海"
+              value={form.tags}
+              onChange={e => setForm(f => ({ ...f, tags: e.target.value }))}
+            />
+          </div>
+        </div>
+
         <div>
           <label className={labelClass}>关系类型</label>
           <div className="flex flex-wrap gap-2">
@@ -94,6 +146,26 @@ export default function NewContact() {
                 className={`text-sm px-3 py-1.5 rounded-full border transition-all font-medium ${
                   form.relationship_type === r.value
                     ? `${r.color} border-transparent`
+                    : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                }`}
+              >
+                {r.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <label className={labelClass}>优先级</label>
+          <div className="flex flex-wrap gap-2">
+            {PRIORITY_TYPES.map(r => (
+              <button
+                key={r.value}
+                type="button"
+                onClick={() => setForm(f => ({ ...f, priority: r.value }))}
+                className={`text-sm px-3 py-1.5 rounded-full border transition-all font-medium ${
+                  form.priority === r.value
+                    ? `${r.color}`
                     : 'border-gray-200 text-gray-600 hover:border-gray-300'
                 }`}
               >
