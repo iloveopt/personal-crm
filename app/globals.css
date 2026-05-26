@@ -3,31 +3,22 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --nike-ink: #050505;
-  --nike-paper: #ffffff;
-  --nike-signal: #fa5400;
-  --nike-volt: #dfff00;
-  --nike-ash: #f3f3f3;
-  --nike-steel: #7a7a7a;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #fafafa;
+  --foreground: #111111;
+  --accent: #6366f1;
+  --accent-light: #eef2ff;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --card: #ffffff;
+  --tag-investor: #3b82f6;
+  --tag-founder: #8b5cf6;
+  --tag-client: #10b981;
+  --tag-friend: #f59e0b;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+  font-family: var(--font-geist), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
