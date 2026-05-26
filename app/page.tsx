@@ -1,12 +1,12 @@
 import Link from 'next/link'
 
 const followUpContacts = [
-  { name: 'Elon Musk', company: 'Tesla / SpaceX / xAI', role: 'CEO', days: 67, tag: 'founder', news: 'xAI 完成 $60B 融资' },
-  { name: 'Sam Altman', company: 'OpenAI', role: 'CEO', days: 55, tag: 'founder', news: 'GPT-5 发布，年化收入 $16B' },
-  { name: 'Anna Zhang', company: 'Northstar Ventures', role: 'Partner', days: 42, tag: 'investor', news: '领投 AI Agent $20M A 轮' },
-  { name: '雷军', company: '小米集团', role: '创始人 & CEO', days: 38, tag: 'founder', news: 'SU7 Ultra 月销破万' },
-  { name: 'Priya Rao', company: 'HelioStack', role: 'VP Product', days: 33, tag: 'friend', news: 'Gartner Cool Vendor' },
-  { name: '王磊', company: 'BluePeak Capital', role: 'Investment Director', days: 61, tag: 'investor', news: '领投 FlowWork B 轮 $30M' },
+  { id: 'contact-elon', name: 'Elon Musk', company: 'Tesla / SpaceX / xAI', role: 'CEO', days: 67, tag: 'founder', news: 'xAI 完成 $60B 融资' },
+  { id: 'contact-sam', name: 'Sam Altman', company: 'OpenAI', role: 'CEO', days: 55, tag: 'founder', news: 'GPT-5 发布，年化收入 $16B' },
+  { id: 'contact-anna', name: 'Anna Zhang', company: 'Northstar Ventures', role: 'Partner', days: 42, tag: 'investor', news: '领投 AI Agent $20M A 轮' },
+  { id: 'contact-lei-jun', name: '雷军', company: '小米集团', role: '创始人 & CEO', days: 38, tag: 'founder', news: 'SU7 Ultra 月销破万' },
+  { id: 'contact-priya', name: 'Priya Rao', company: 'HelioStack', role: 'VP Product', days: 33, tag: 'friend', news: 'Gartner Cool Vendor' },
+  { id: 'contact-lei', name: '王磊', company: 'BluePeak Capital', role: 'Investment Director', days: 61, tag: 'investor', news: '领投 FlowWork B 轮 $30M' },
 ]
 
 const features = [
@@ -81,9 +81,10 @@ export default function HomePage() {
         </div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {followUpContacts.map((c) => (
-            <div
-              key={c.name}
-              className="rounded-xl border border-[var(--border)] bg-white p-5 transition hover:shadow-md"
+            <Link
+              key={c.id}
+              href={`/contacts/${c.id}`}
+              className="block rounded-xl border border-[var(--border)] bg-white p-5 transition hover:shadow-md"
             >
               <div className="flex items-start justify-between">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-sm font-semibold text-gray-600">
@@ -104,7 +105,7 @@ export default function HomePage() {
                 <span className={`h-2 w-2 rounded-full ${c.days > 30 ? 'bg-red-400' : 'bg-green-400'}`} />
                 <span className="text-[var(--muted)]">{c.days} 天未联系</span>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </section>

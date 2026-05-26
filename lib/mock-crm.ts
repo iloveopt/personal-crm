@@ -323,13 +323,13 @@ function createSeedContacts(): Contact[] {
 
 function createSeedState(): CrmState {
   const contacts = createSeedContacts()
-  const updates: ContactUpdate[] = contacts.slice(0, 5).map((contact, index) => ({
+  const updates: ContactUpdate[] = contacts.map((contact, index) => ({
     id: `update-${contact.id}`,
     contact_id: contact.id,
     raw_results: { source: 'mock', query: `${contact.name} ${contact.company}` },
     summary: buildUpdateSummary(contact),
     news: makeNews(contact),
-    fetched_at: daysAgo(index + 2),
+    fetched_at: daysAgo(index + 1),
   }))
 
   return {
@@ -583,7 +583,18 @@ function isFollowUpDue(contact: Contact) {
   return daysSinceContact >= FOLLOW_UP_DAYS
 }
 
+const CUSTOM_SUMMARIES: Record<string, string> = {
+  'contact-elon': 'Elon Musk 近期动作密集：xAI 完成 $60B 融资加速 Grok 迭代，Tesla FSD v13 获中国路测许可，SpaceX Starship 第七次试飞成功。多线并进，AI + 硬件整合是核心主题。',
+  'contact-sam': 'Sam Altman 带领 OpenAI 进入新阶段：GPT-5 发布、年化收入突破 $16B、Stargate 基础设施项目动工。正在从研究机构转型为平台型公司，生态合作机会增多。',
+  'contact-jensen': 'Jensen Huang 和 NVIDIA 继续统治 AI 算力市场：单季营收 $44B，Blackwell Ultra 供不应求。同时布局具身智能（Cosmos 平台）和机器人，影响力远超芯片本身。',
+  'contact-lei-jun': '雷军和小米在多条战线高歌猛进：SU7 Ultra 月销破万超越 BBA，MiLM 3.0 开源，集团季度营收突破千亿。汽车 + AI + IoT 生态协同效应开始显现。',
+  'contact-zhang-yiming': '张一鸣虽已退居幕后，但字节跳动技术动作不断：Seed 团队发布万亿参数 MoE 模型，TikTok 电商 GMV 突破 $500B。在 AI 和全球化两条主线上持续发力。',
+}
+
 function buildUpdateSummary(contact: Contact) {
+  const custom = CUSTOM_SUMMARIES[contact.id]
+  if (custom) return custom
+
   const company = contact.company || '当前项目'
   const role = contact.relationship_type || '联系人'
   const industry = contact.industry || '企业服务'
