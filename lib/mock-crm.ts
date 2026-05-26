@@ -102,7 +102,7 @@ const NEWS_POOL: Record<string, NewsItem[]> = {
   ],
 }
 
-function makeNews(contact: Contact, _index = 0): NewsItem[] {
+function makeNews(contact: Contact): NewsItem[] {
   const poolNews = NEWS_POOL[contact.id]
   if (poolNews) return poolNews
 
@@ -328,7 +328,7 @@ function createSeedState(): CrmState {
     contact_id: contact.id,
     raw_results: { source: 'mock', query: `${contact.name} ${contact.company}` },
     summary: buildUpdateSummary(contact),
-    news: makeNews(contact, index),
+    news: makeNews(contact),
     fetched_at: daysAgo(index + 2),
   }))
 
@@ -779,7 +779,7 @@ export function addMockUpdate(contactId: string) {
     contact_id: contactId,
     raw_results: { source: 'mock', query: `${contact.name} ${contact.company || ''}`.trim() },
     summary: buildUpdateSummary(contact),
-    news: makeNews(contact, 1),
+    news: makeNews(contact),
     fetched_at: new Date().toISOString(),
   }
 
