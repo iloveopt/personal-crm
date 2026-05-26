@@ -1,9 +1,12 @@
 import Link from 'next/link'
 
 const followUpContacts = [
-  { name: 'Anna Zhang', role: 'AI 投资', days: 42, tag: 'investor' },
-  { name: '陈明', role: 'AI 销售自动化', days: 8, tag: 'founder' },
-  { name: 'Priya Rao', role: 'AI 基础设施', days: 33, tag: 'client' },
+  { name: 'Elon Musk', company: 'Tesla / SpaceX / xAI', role: 'CEO', days: 67, tag: 'founder', news: 'xAI 完成 $60B 融资' },
+  { name: 'Sam Altman', company: 'OpenAI', role: 'CEO', days: 55, tag: 'founder', news: 'GPT-5 发布，年化收入 $16B' },
+  { name: 'Anna Zhang', company: 'Northstar Ventures', role: 'Partner', days: 42, tag: 'investor', news: '领投 AI Agent $20M A 轮' },
+  { name: '雷军', company: '小米集团', role: '创始人 & CEO', days: 38, tag: 'founder', news: 'SU7 Ultra 月销破万' },
+  { name: 'Priya Rao', company: 'HelioStack', role: 'VP Product', days: 33, tag: 'friend', news: 'Gartner Cool Vendor' },
+  { name: '王磊', company: 'BluePeak Capital', role: 'Investment Director', days: 61, tag: 'investor', news: '领投 FlowWork B 轮 $30M' },
 ]
 
 const features = [
@@ -34,6 +37,13 @@ const tagColors: Record<string, string> = {
   founder: 'bg-purple-50 text-purple-700',
   client: 'bg-emerald-50 text-emerald-700',
   friend: 'bg-amber-50 text-amber-700',
+}
+
+const tagLabels: Record<string, string> = {
+  investor: '投资人',
+  founder: '创业者',
+  client: '客户',
+  friend: '朋友',
 }
 
 export default function HomePage() {
@@ -80,14 +90,17 @@ export default function HomePage() {
                   {c.name[0]}
                 </div>
                 <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${tagColors[c.tag]}`}>
-                  {c.tag === 'investor' ? '投资人' : c.tag === 'founder' ? '创业者' : c.tag === 'client' ? '客户' : '朋友'}
+                  {tagLabels[c.tag]}
                 </span>
               </div>
               <div className="mt-3">
                 <p className="font-medium text-gray-900">{c.name}</p>
-                <p className="mt-0.5 text-sm text-[var(--muted)]">{c.role}</p>
+                <p className="mt-0.5 text-sm text-[var(--muted)]">{c.company} · {c.role}</p>
               </div>
-              <div className="mt-4 flex items-center gap-1.5 text-sm">
+              <div className="mt-3 rounded-md bg-gray-50 px-3 py-2 text-xs text-gray-600">
+                📰 {c.news}
+              </div>
+              <div className="mt-3 flex items-center gap-1.5 text-sm">
                 <span className={`h-2 w-2 rounded-full ${c.days > 30 ? 'bg-red-400' : 'bg-green-400'}`} />
                 <span className="text-[var(--muted)]">{c.days} 天未联系</span>
               </div>
